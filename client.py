@@ -13,24 +13,6 @@ client = nac.NetworkAsCodeClient(token=NAC_TOKEN)
 def getLocNum(numtelf: str) -> dict:
     """Retrieves the latitude and longitude of a device given its phone number."""
     try:
-<<<<<<< HEAD
-        device =  client.devices.get(phone_number=numtelf)
-        location = device.location(max_age=60)
-        return {"longitude": location.longitude, "latitude": location.latitude ,"radius":10_000}
-    except Exception as e:
-        raise ValueError(f"Error getting device location: {e}") from e
-
-def is_there(device_num: str, location: dict):   
-    device = client.devices.get(phone_number=device_num)
-    long= location['longitude']
-    lat= location['latitude']
-    radius= location['radius']
-    return device.verify_location(long,lat,radius)
-    # longitude=19, latitude=47, radius=10_000, max_age=60
-    
-    
-# print(getLocNum('2143100025'))
-=======
         device = client.devices.get(phone_number=numtelf)
         location = device.location(max_age=60)
         return {"longitude": location.longitude, "latitude": location.latitude}
@@ -46,9 +28,6 @@ def is_there(device_num: str, longitude: float, latitude: float, radius: int = 1
         )
     except Exception as e:
         raise ValueError(f"Error verifying device location: {e}") from e
-<<<<<<< HEAD
->>>>>>> 5c53260c909f2d5a322ab44574b9a44587420017
-=======
     
 def save_location_history(device_num: str):
     while True:
@@ -73,4 +52,3 @@ def save_location_history(device_num: str):
 
         # Wait for the specified interval before next iteration
         time.sleep(3600)  # Convert minutes to seconds
->>>>>>> machine_learning
