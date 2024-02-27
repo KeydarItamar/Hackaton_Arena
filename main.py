@@ -44,5 +44,8 @@ if location is not None:
 else:
     print("Unable to get device location.")
  
+def is_there(device_num, data):   
+    device = client.devices.get(phone_number=device_num)
+    return device.verify_location(data)
+    # longitude=19, latitude=47, radius=10_000, max_age=60
 
- 
