@@ -1,14 +1,25 @@
-import network_as_code as nac
+from fastapi import FastAPI
+from client import getLocNum, is_there
 
-NAC_TOKEN = "62ac7c527dmshe7f67ae0b9f3680p1bfae2jsnde0b639c225e"
+app = FastAPI()
 
-client = nac.NetworkAsCodeClient(token=NAC_TOKEN)
-
-async def getLocNum(numtelf: str) -> dict:
-    """Retrieves the latitude and longitude of a device given its phone number."""
+@app.get("/getUbiByNum/{num}")
+def read_root(num: str):
     try:
-        device = await client.devices.get(phone_number=numtelf)
-        location = await device.location(max_age=60)
-        return {"longitude": location.longitude, "latitude": location.latitude}
+        location = getLocNum(num)
+        return location
     except Exception as e:
-        raise ValueError(f"Error getting device location: {e}") from e
+        return {"error": str(e)}
+
+@app.get("/is_there/{device_num}/{longitude}/{latitude}")
+def verify_location(device_num: str, longitude: float, latitude: float):
+    radius=300
+    try:
+        is_within = is_there(device_num, longitude, latitude,radius)
+        return {"device_present": is_within}
+    except Exception as e:
+        return {"error": str(e)}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

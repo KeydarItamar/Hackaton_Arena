@@ -1,12 +1,12 @@
 from fastapi import FastAPI
-from client import getLocNum  # Import the getLocNum function
+from client import getLocNum, is_there
 
 app = FastAPI()
 
 @app.get("/getUbiByNum/{num}")
-async def read_root(num: str):
+def read_root(num: str):
     try:
-        location = await getLocNum(num)
+        location = getLocNum(num)
         return location
     except Exception as e:
         return {"error": str(e)}
