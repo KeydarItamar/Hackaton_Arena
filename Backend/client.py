@@ -8,6 +8,3 @@ def getLocNum(numtelf: str):
     device = client.devices.get(phone_number= numtelf)
     location = device.location(max_age=60)
     return location
- 
-
- 
