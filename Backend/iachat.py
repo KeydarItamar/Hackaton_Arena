@@ -18,19 +18,29 @@ os.environ["COHERE_API_KEY"] = COHERE_API_KEY
 chat = ChatCohere(model="command", max_tokens=256, temperature=0.75)
 
 animal_data={"name": 'pickles', "age": 3,"specie": 'cat', "size": 'big'}
-query = "What is a good diet for my pet?"
 
-query2 = "What food is poisonus for my pet?"
-query3 = "What do you sugest to entertain my pet?"
-query4 = "can you make a lirycs song about my pet?"
+query  = "What is a good diet for my pet?"
+query2 = "What foods are poisonous for my pet?"
+query3 = "What do you suggest a training for my pet?"
+query4 = "Can you write a song lyric about my pet?"
 
-def ia_question(animal_data, query):
+def ia_question(animal_data, num):
+    query1  = "What is a good diet for my pet?"
+    query2 = "What foods are poisonous for my pet?"
+    query3 = "What do you suggest a training for my pet?"
+    query4 = "Can you write a song lyric about my pet?"
+    query=''
+    if num == 1 : query = query1
+    if num == 2 : query = query2
+    if num == 3 : query = query3
+    if num == 4 : query = query4
+    
     prompt = ChatPromptTemplate.from_template("I have this animal with me, {animal_data} and i like to know: {query} ")
     chain = prompt | chat
-    print(chain.invoke({"animal_data": animal_data, "query": query}).content)
+    return chain.invoke({"animal_data": animal_data, "query": query}).content
 
 
-ia_question(animal_data, query)
+ia_question(animal_data, 3)
 
 
 
