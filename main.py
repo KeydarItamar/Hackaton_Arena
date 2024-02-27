@@ -3,7 +3,10 @@ from fastapi import FastAPI
 from client import *  # Import the getLocNum function
 from Backend import iachat
 =======
-from client import getLocNum, is_there
+from client import getLocNum, is_there, save_location_history
+LOCATION_HISTORY_FILE = "location_history.csv" 
+import csv
+
 
 >>>>>>> 5c53260c909f2d5a322ab44574b9a44587420017
 app = FastAPI()
@@ -36,14 +39,20 @@ async def ia_reponse(data_animal,query):
 
 
 =======
-@app.get("/is_there/{device_num}/{longitude}/{latitude}")
-def verify_location(device_num: str, longitude: float, latitude: float):
-    radius=300
+@app.get("/is_there/{device_num}/{longitude}/{latitude}/{radius}")
+def verify_location(device_num: str, longitude: float, latitude: float, radius: int): 
     try:
-        is_within = is_there(device_num, longitude, latitude,radius)
+        is_within = is_there(device_num, longitude, latitude, radius)
         return {"device_present": is_within}
     except Exception as e:
         return {"error": str(e)}
+    
+@app.get("/save_location_history/{device_num}")
+def initiate_history(device_num: str):
+    save_location_history(device_num)  # Call the imported function
+    return {"message": "Location history saving started for device " + device_num}
+
+        
 
 if __name__ == "__main__":
     import uvicorn
