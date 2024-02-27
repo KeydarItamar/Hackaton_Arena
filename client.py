@@ -1,25 +1,24 @@
-from fastapi import FastAPI
-from client import getLocNum, is_there
+import network_as_code as nac
 
-app = FastAPI()
+NAC_TOKEN = "62ac7c527dmshe7f67ae0b9f3680p1bfae2jsnde0b639c225e"
 
-@app.get("/getUbiByNum/{num}")
-def read_root(num: str):
+client = nac.NetworkAsCodeClient(token=NAC_TOKEN)
+
+def getLocNum(numtelf: str) -> dict:
+    """Retrieves the latitude and longitude of a device given its phone number."""
     try:
-        location = getLocNum(num)
-        return location
+        device = client.devices.get(phone_number=numtelf)
+        location = device.location(max_age=60)
+        return {"longitude": location.longitude, "latitude": location.latitude}
     except Exception as e:
-        return {"error": str(e)}
+        raise ValueError(f"Error getting device location: {e}") from e
 
-@app.get("/is_there/{device_num}/{longitude}/{latitude}")
-def verify_location(device_num: str, longitude: float, latitude: float):
-    radius=300
+def is_there(device_num: str, longitude: float, latitude: float, radius: int = 10_000, max_age: int = 60) -> bool:
+    """Checks if the device is within a specified radius of a location."""
     try:
-        is_within = is_there(device_num, longitude, latitude,radius)
-        return {"device_present": is_within}
+        device = client.devices.get(phone_number=device_num)
+        return device.verify_location(
+            longitude=longitude, latitude=latitude, radius=radius, max_age=max_age
+        )
     except Exception as e:
-        return {"error": str(e)}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+        raise ValueError(f"Error verifying device location: {e}") from e
