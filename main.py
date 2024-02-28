@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from client import *  # Import the getLocNum function
 from Backend import iachat
 from client import getLocNum, is_there, save_location_history
+import json
 LOCATION_HISTORY_FILE = "location_history.csv" 
 import csv
-
 
 app = FastAPI()
 
@@ -17,14 +18,24 @@ def read_root(num: str):
         return {"error": str(e)}
 
 
+class AnimalData(BaseModel):
+    data_animal: dict
 
-
-@app.get("/questions/{data_animal}/{num}")
-async def ia_reponse(data_animal,num: int):
+@app.post("/questions")
+async def ia_response(animal_data: AnimalData):
     try:
-        return iachat.ia_question(data_animal,num)
+        return iachat.ia_question(animal_data.data_animal)
     except Exception as e:
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+# @app.get("/questions/{data_animal}/{num}")
+# async def ia_reponse(data_animal,num: int):
+#     try:
+#         return iachat.ia_question(data_animal,num)
+#     except Exception as e:
+#         return {"error": str(e)}
 
 
 @app.get("/is_there/{device_num}/{longitude}/{latitude}/{radius}")
@@ -41,7 +52,7 @@ def initiate_history(device_num: str):
     return {"message": "Location history saving started for device " + device_num}
 
         
-
+        
 
 
 if __name__ == "__main__":
